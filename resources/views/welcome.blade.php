@@ -510,7 +510,7 @@
                 </div>
 
                 <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-                    {{ env('DB_CONNECTION') . '-' . env('DB_DATABASE')}}
+                    {{ env('DB_CONNECTION') . '-' . env('DB_DATABASE')}} {{ env('APP_URL') }}
                 </div>
 
                 <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
