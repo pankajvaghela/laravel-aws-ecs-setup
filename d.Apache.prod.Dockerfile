@@ -70,7 +70,7 @@ RUN chmod 777 -R /var/www/storage/ && \
 
 
 RUN php -r "file_exists('.env') || copy('.env.example.prod', '.env');"
-RUN composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+# RUN composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 RUN php artisan key:generate
 
 # Copy existing application directory permissions
