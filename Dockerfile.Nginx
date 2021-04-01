@@ -1,0 +1,55 @@
+FROM php:7.4-fpm
+
+RUN apt-get update -y \
+    && apt-get install -y nginx
+
+# PHP_CPPFLAGS are used by the docker-php-ext-* scripts
+ENV PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11"
+
+RUN apt-get install -y libzip-dev
+
+RUN docker-php-ext-install pdo_mysql zip exif pcntl
+RUN docker-php-ext-install opcache
+RUN apt-get install libicu-dev -y
+# RUN docker-php-ext-configure intl
+# RUN docker-php-ext-install intl
+RUN apt-get remove libicu-dev icu-devtools -y
+
+
+RUN { \
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.interned_strings_buffer=8'; \
+    echo 'opcache.max_accelerated_files=4000'; \
+    echo 'opcache.revalidate_freq=2'; \
+    echo 'opcache.fast_shutdown=1'; \
+    echo 'opcache.enable_cli=1'; \
+    } > /usr/local/etc/php/conf.d/php-opocache-cfg.ini
+
+COPY docker/nginx-site.conf /etc/nginx/sites-enabled/default
+COPY docker/docker-entrypoint-nginx.sh /etc/entrypoint.sh
+
+
+COPY --chown=www-data:www-data . /var/www
+
+WORKDIR /var/www
+
+# Add user for laravel application
+# RUN groupadd -g 1000 www
+# RUN useradd -u 1000 -ms /bin/bash -g www www
+
+RUN chmod 777 -R /var/www/storage/ && \
+    # echo "Listen 8080" >> /etc/apache2/ports.conf && \
+    chown -R www-data:www-data /var/www/
+
+# Copy existing application directory permissions
+# COPY --chown=www:www . /var/www
+
+# Change current user to www
+
+EXPOSE 80 443
+
+RUN chmod +x /etc/entrypoint.sh
+
+# USER www
+
+ENTRYPOINT ["sh", "/etc/entrypoint.sh"]
