@@ -65,7 +65,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: laravel-ecs-setup
+        ECR_REPOSITORY: laravel-ecs
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build a docker container and
